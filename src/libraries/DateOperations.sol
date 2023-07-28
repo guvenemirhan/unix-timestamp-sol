@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 ///
 /// @dev This library performs conversion operations between Unix timestamp and human readable time.
 library DateOperations {
-
    /// @dev Using uint8 for the maximum values reduces the number of operations and ensures gas savings
    /// during the process. Also it is restrictive for the user.
    struct Date {
@@ -48,7 +47,7 @@ library DateOperations {
       // how many days have passed in the year until the first day of each month.
       uint16[12] memory monthPastDays;
       monthPastDays = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-      uint256 currentMonth = monthPastDays[date.month -1];
+      uint256 currentMonth = monthPastDays[date.month - 1];
 
       // solhint-disable-next-line
       assembly {
@@ -57,7 +56,10 @@ library DateOperations {
          let month := mload(add(date, 0x20))
 
          // leap year calculation formula
-         unixTimestamp := add(mul(sub(year, unixEpoch), 365), add(sub(sdiv(sub(year, 1969), 4), sdiv(sub(year, 1901), 100)), sdiv(sub(year, 1601), 400)))
+         unixTimestamp := add(
+            mul(sub(year, unixEpoch), 365),
+            add(sub(sdiv(sub(year, 1969), 4), sdiv(sub(year, 1901), 100)), sdiv(sub(year, 1601), 400))
+         )
 
          // Checks whether the specified year is a leap year
          let isLeap := or(eq(smod(year, 400), 0), and(eq(smod(year, 4), 0), iszero(eq(smod(year, 100), 0))))
@@ -84,7 +86,6 @@ library DateOperations {
    //
    // @return dates A Date struct representing the date information extracted from the unix timestamp.
    function toDate(uint256 unixTimestamp) internal pure returns (Date memory dates) {
-
       // Ensure that the given unix timestamp is within the range of a uint32.
       // Realistic timestamp values are within this range.
       // As the value increases, the number of operations to perform increases as well, leading to more gas consumption.
@@ -121,11 +122,18 @@ library DateOperations {
          let daysArray := add(daysOfMonth, 0x20)
 
          // Calculating current year
-         for { } true { } {
+         for {
+
+         } true {
+
+         } {
             // Determines if the given year is a leap year. As a general rule, leap years are years that are divisible by 4.
             // However, there is an exception: among the years that are multiples of 100, only those that can be evenly divided
             //by 400 are considered leap years.
-            let isLeap := or(eq(smod(currYear, 400), 0), and(eq(smod(currYear, 4), 0), iszero(eq(smod(currYear, 100), 0))))
+            let isLeap := or(
+               eq(smod(currYear, 400), 0),
+               and(eq(smod(currYear, 4), 0), iszero(eq(smod(currYear, 100), 0)))
+            )
 
             // If the year is a leap year, subtract 366 from pastDays.
             if isLeap {
@@ -157,10 +165,13 @@ library DateOperations {
 
          // Calculating month and day
          if eq(isLeapYear, 1) {
-
             // value is reset for the new loop
 
-            for { } true { } {
+            for {
+
+            } true {
+
+            } {
                // if the month is february
                if eq(index, 1) {
                   // if extra days less than 29 -> break
@@ -177,7 +188,7 @@ library DateOperations {
                if iszero(eq(index, 1)) {
                   let currMonth := and(mload(add(daysArray, mul(index, 0x20))), 0xFF)
 
-               if slt(sub(leapDays, currMonth), 0) {
+                  if slt(sub(leapDays, currMonth), 0) {
                      break
                   }
                   month := add(month, 1)
@@ -189,10 +200,14 @@ library DateOperations {
          // if the year is not a leap year
 
          if iszero(eq(isLeapYear, 1)) {
-            for { } lt(index, 20) { } {
+            for {
+
+            } lt(index, 20) {
+
+            } {
                let currMonth := and(mload(add(daysArray, mul(index, 0x20))), 0xFF)
 
-            if slt(sub(leapDays, currMonth), 0) {
+               if slt(sub(leapDays, currMonth), 0) {
                   break
                }
                month := add(month, 1)
@@ -214,7 +229,7 @@ library DateOperations {
             if iszero(and(eq(month, 2), eq(isLeapYear, 1))) {
                let currMonth := and(mload(add(daysArray, mul(sub(month, 1), 0x20))), 0xFF)
 
-            mstore(dates, currMonth)
+               mstore(dates, currMonth)
             }
          }
 
