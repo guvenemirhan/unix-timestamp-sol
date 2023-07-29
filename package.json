@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "lint": "prettier --write ./src/**/*.sol",
+    "lint-test": "prettier --write ./test/**/*.sol",
+
     "solhint": "solhint 'src/**/*.sol'"
   },
   "devDependencies": {
